@@ -291,6 +291,87 @@ ALTER TABLE Patient
 MODIFY COLUMN insurance_id INT NOT NULL;
 
 
+select * from Treatment;
+CREATE INDEX idx_code ON Treatment(code);
+select * from insurance;
+select * from patient;
+select * from doctors;
+select * from department;
+select * from affiliated_with;
+select * from prescribe;
+select * from medication;
+select * from treatment;
+select * from bed;
+select * from nurse;
+select * from stay;
+select * from undergoes_treatment;
+
+CREATE TABLE PatientDiagnosis (
+    DiagnosisID INT PRIMARY KEY AUTO_INCREMENT,
+    PatientID INT,
+    dr_id int,
+    Diagnosis VARCHAR(255) NOT NULL,
+    DiagnosisDate DATE NOT NULL,
+    FOREIGN KEY (PatientID) REFERENCES Patient(PatientID),
+    FOREIGN KEY (dr_id) REFERENCES doctors(emp_id)
+);
+
+INSERT INTO PatientDiagnosis (PatientID, dr_id, Diagnosis, DiagnosisDate)
+VALUES
+    (1, 1, 'Fever', '2023-01-15'),
+    (2, 2, 'Headache', '2023-02-10'),
+    (3, 3, 'Flu', '2023-03-05'),
+    (4, 4, 'Allergies', '2023-04-20'),
+    (5, 5, 'Sprained Ankle', '2023-05-12');
+    
+INSERT INTO PatientDiagnosis (PatientID, dr_id, Diagnosis, DiagnosisDate)
+VALUES
+    (1, 1, 'Common Cold', '2023-06-30'),
+    (2, 2, 'Migraine', '2023-09-14'),
+    (3, 3, 'Stomachache', '2023-07-18'),
+    (4, 4, 'Sinusitis', '2023-08-25'),
+    (5, 5, 'Fractured Arm', '2023-10-05'),
+    (1, 6, 'Influenza', '2023-11-20'),
+    (2, 7, 'Ear Infection', '2023-12-15'),
+    (3, 8, 'Gastritis', '2024-01-10'),
+    (4, 9, 'Bronchitis', '2024-02-05'),
+    (5, 10, 'Sprained Wrist', '2024-03-02');
+
+select * from PatientDiagnosis;
+
+ALTER TABLE Prescribe RENAME TO Prescribe_old;
+
+CREATE TABLE Prescribe (
+    PatientID INT NOT NULL,
+    DiagnosisID INT NOT NULL, 
+    dr_id INT NOT NULL,
+    medication_id INT NOT NULL,
+    date TIMESTAMP NOT NULL,
+    dosage VARCHAR(50) NOT NULL,
+    PRIMARY KEY (PatientID),
+    FOREIGN KEY (PatientID) REFERENCES Patient(PatientID),
+    FOREIGN KEY (dr_id) REFERENCES Doctors(emp_id),
+    FOREIGN KEY (medication_id) REFERENCES Medication(m_id),
+    FOREIGN KEY (DiagnosisID) REFERENCES PatientDiagnosis(DiagnosisID)
+);
+
+INSERT INTO Prescribe (PatientID, DiagnosisID, dr_id, medication_id, date, dosage)
+VALUES
+    (1, 11, 1, 1, '2023-01-15', '1 pill twice a day'),
+    (2, 12, 2, 2, '2023-02-10', '2 tablets daily'),
+    (3, 13, 3, 3, '2023-03-05', '1 capsule before meals'),
+    (4, 14, 4, 4, '2023-04-20', '1 teaspoon every 6 hours'),
+    (5, 15, 5, 5, '2023-05-12', '1 spray as needed');
+    
+INSERT INTO Prescribe (PatientID, DiagnosisID, dr_id, medication_id, date, dosage)
+VALUES
+    (6, 16, 6, 6, '2023-06-30', '1 pill before bedtime'),
+    (7, 17, 7, 7, '2023-07-15', '2 tablets with meals'),
+    (8, 18, 8, 8, '2023-08-10', '1 capsule twice daily'),
+    (9, 19, 9, 9, '2023-09-25', '1 tablet after breakfast'),
+    (10, 20, 10, 10, '2023-10-20', '1 spray every 4 hours');
+
+
 
 
 
