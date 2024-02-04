@@ -1,0 +1,305 @@
+create database milestone1;
+use milestone1;
+CREATE TABLE Patient(
+    PatientID INT PRIMARY KEY,
+    FirstName VARCHAR(50) NOT NULL,
+    LastName VARCHAR(50) NOT NULL,
+    Address VARCHAR(100) NOT NULL,
+    PinCode VARCHAR(10) NOT NULL,
+    Age INT NOT NULL,
+    Gender VARCHAR(1) NOT NULL,
+    Phone VARCHAR(10) NOT NULL,
+    CONSTRAINT CheckAge CHECK (Age < 110)
+);
+-- Inserting sample data into the Patient table
+INSERT INTO Patient (PatientID, FirstName, LastName, Address, PinCode, Age, Gender, Phone)
+VALUES
+    (1, 'John', 'Doe', '123 Main St', '123456', 30, 'M', '1234567890'),
+    (2, 'Jane', 'Smith', '456 Elm St', '789012', 25, 'F', '9876543210'),
+    (3, 'Michael', 'Johnson', '789 Oak St', '345678', 40, 'M', '5678901234'),
+    (4, 'Emily', 'Williams', '321 Pine St', '901234', 35, 'F', '4567890123'),
+    (5, 'David', 'Brown', '654 Maple St', '567890', 28, 'M', '7890123456');
+-- Inserting more sample data into the Patient table
+INSERT INTO Patient (PatientID, FirstName, LastName, Address, PinCode, Age, Gender, Phone)
+VALUES
+    (6, 'Sarah', 'Taylor', '987 Cedar St', '234567', 22, 'F', '9012345678'),
+    (7, 'Christopher', 'Lee', '741 Birch St', '890123', 45, 'M', '6789012345'),
+    (8, 'Amanda', 'Clark', '369 Walnut St', '456789', 33, 'F', '3456789012'),
+    (9, 'James', 'Martinez', '852 Cherry St', '012345', 29, 'M', '2345678901'),
+    (10, 'Jessica', 'Garcia', '159 Poplar St', '678901', 27, 'F', '8901234567');
+    
+ CREATE TABLE Doctors (
+    emp_id INT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    position VARCHAR(50) NOT NULL,
+    speciality VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    phone_number VARCHAR(10) NOT NULL,
+    experience_years INT NOT NULL,
+    joining_date DATE NOT NULL
+);
+INSERT INTO Doctors (emp_id, first_name, last_name, position, speciality, email, phone_number, experience_years, joining_date)
+VALUES
+    (1, 'Mohammed', 'Asif', 'Senior Physician', 'Cardiology', 'mohammed.asif@example.com', '1234567890', 5, '2020-03-15'),
+    (2, 'John', 'Doe', 'Consultant', 'Orthopedics', 'john.doe@example.com', '2345678901', 8, '2017-09-28'),
+    (3, 'Jane', 'Smith', 'Surgeon', 'General Surgery', 'jane.smith@example.com', '3456789012', 10, '2015-06-10'),
+    (4, 'Michael', 'Johnson', 'Pediatrician', 'Pediatrics', 'michael.johnson@example.com', '4567890123', 6, '2019-11-20'),
+    (5, 'Emily', 'Williams', 'Dermatologist', 'Dermatology', 'emily.williams@example.com', '5678901234', 7, '2018-04-05'),
+    (6, 'David', 'Brown', 'Ophthalmologist', 'Ophthalmology', 'david.brown@example.com', '6789012345', 9, '2016-08-12'),
+    (7, 'Sarah', 'Taylor', 'Psychiatrist', 'Psychiatry', 'sarah.taylor@example.com', '7890123456', 4, '2021-02-18'),
+    (8, 'Christopher', 'Lee', 'Neurologist', 'Neurology', 'christopher.lee@example.com', '8901234567', 11, '2014-10-30'),
+    (9, 'Amanda', 'Clark', 'Gynecologist', 'Obstetrics & Gynecology', 'amanda.clark@example.com', '9012345678', 8, '2017-07-25'),
+    (10, 'James', 'Martinez', 'ENT Specialist', 'Otorhinolaryngology', 'james.martinez@example.com', '0123456789', 12, '2013-05-14');
+
+-- Create the Department table with the modifications
+CREATE TABLE Department (
+    d_id INT PRIMARY KEY,
+    department_name VARCHAR(50) NOT NULL,
+    head INT NOT NULL,
+    FOREIGN KEY (head) REFERENCES Doctors(emp_id)
+);
+-- Inserting data into the Department table
+INSERT INTO Department (d_id, department_name, head)
+VALUES
+    (1, 'Cardiology Department', 1),
+    (2, 'Orthopedics Department', 2),
+    (3, 'Surgery Department', 3),
+    (4, 'Pediatrics Department', 4),
+    (5, 'Dermatology Department', 5),
+    (6, 'Ophthalmology Department', 6),
+    (7, 'Psychiatry Department', 7),
+    (8, 'Neurology Department', 8),
+    (9, 'Obstetrics & Gynecology Department', 9),
+    (10, 'ENT Department', 10);
+CREATE TABLE affiliated_with (
+    doctor INT PRIMARY KEY,
+    department INT not null,
+    FOREIGN KEY (doctor) REFERENCES Doctors(emp_id),
+    FOREIGN KEY (department) REFERENCES Department(d_id)
+);
+
+CREATE TABLE Medication (
+    m_id INT PRIMARY KEY,
+    name VARCHAR(80) NOT NULL,
+    brand VARCHAR(80) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    cost DECIMAL(10, 2) NOT NULL
+);
+
+INSERT INTO Medication (m_id, name, brand, description, cost)
+VALUES
+    (1, 'Paracetamol', 'Panadol', 'Pain reliever and fever reducer', 449.00),
+    (2, 'Ibuprofen', 'Advil', 'Nonsteroidal anti-inflammatory drug (NSAID)', 559.00),
+    (3, 'Amoxicillin', 'Amoxil', 'Antibiotic used to treat bacterial infections', 699.00),
+    (4, 'Lisinopril', 'Prinivil', 'Angiotensin-converting enzyme (ACE) inhibitor used for high blood pressure', 899.00),
+    (5, 'Atorvastatin', 'Lipitor', 'Statins used to lower cholesterol levels', 1199.00),
+	(6, 'Omeprazole', 'Prilosec', 'Proton pump inhibitor used to treat gastroesophageal reflux disease (GERD)', 675.00),
+    (7, 'Metformin', 'Glucophage', 'Oral diabetes medication used to control blood sugar levels', 485.00),
+    (8, 'Levothyroxine', 'Synthroid', 'Thyroid hormone replacement used to treat hypothyroidism', 820.00),
+    (9, 'Albuterol', 'Proventil', 'Bronchodilator used to treat asthma and chronic obstructive pulmonary disease (COPD)', 575.00),
+    (10, 'Warfarin', 'Coumadin', 'Anticoagulant used to prevent blood clots', 985.00);
+
+CREATE TABLE Prescribe (
+    PatientID INT NOT NULL,
+    dr_id INT NOT NULL,
+    m_id INT NOT NULL,
+    date TIMESTAMP NOT NULL,
+    dosage VARCHAR(50) NOT NULL,
+    PRIMARY KEY (PatientID),
+    FOREIGN KEY (PatientID) REFERENCES Patient(PatientID),
+    FOREIGN KEY (dr_id) REFERENCES Doctors(emp_id),
+    FOREIGN KEY (m_id) REFERENCES Medication(m_id)
+);
+ALTER TABLE Prescribe
+ADD cost DECIMAL(10, 2) NOT NULL;
+
+
+INSERT INTO Prescribe (PatientID, dr_id, m_id, date, dosage, cost)
+VALUES
+    (1, 1, 1, '2024-01-31 08:00:00', '1 tablet twice daily', 449.00), 
+    (2, 2, 2, '2024-01-31 09:30:00', '1 capsule daily', 559.00),    
+    (3, 3, 3, '2024-01-31 11:00:00', '500mg three times a day', 699.00), 
+    (4, 4, 4, '2024-01-31 13:00:00', '10mg once daily', 899.00),  
+    (5, 5, 5, '2024-01-31 15:00:00', '20mg once at bedtime', 1199.00); 
+
+    
+INSERT INTO Prescribe (PatientID, dr_id, m_id, date, dosage)
+VALUES
+    (6, 6, 6, '2024-01-31 16:30:00', '1 tablet twice daily'),
+    (7, 7, 7, '2024-01-31 18:00:00', '1 tablet once daily'),
+    (8, 8, 8, '2024-01-31 20:00:00', '1 capsule daily'),
+    (9, 9, 9, '2024-01-31 10:00:00', '1 tablet three times a day'),
+    (10, 10, 10, '2024-01-31 12:00:00', '1 tablet once daily');
+    
+INSERT INTO Prescribe (PatientID, dr_id, m_id, date, dosage, cost)
+VALUES
+    (6, 6, 6, '2024-01-31 16:30:00', '1 tablet twice daily', 675.00), 
+    (7, 7, 7, '2024-01-31 18:00:00', '1 tablet once daily', 485.00), 
+    (8, 8, 8, '2024-01-31 20:00:00', '1 capsule daily', 820.00),    
+    (9, 9, 9, '2024-01-31 10:00:00', '1 tablet three times a day', 575.00), 
+    (10, 10, 10, '2024-01-31 12:00:00', '1 tablet once daily', 985.00); 
+
+
+
+CREATE TABLE Treatment (
+    code INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    cost DECIMAL(10, 2) NOT NULL CHECK (cost >= 0),
+    description VARCHAR(255) NOT NULL,
+    duration INT NOT NULL
+);
+
+INSERT INTO Treatment (code, name, cost, description, duration)
+VALUES
+    (1, 'Physical Therapy', 3500.00, 'Rehabilitation exercises', 60),
+    (2, 'X-Ray', 2100.00, 'Diagnostic imaging technique', 15),
+    (3, 'Blood Test', 1050.00, 'Laboratory analysis of blood sample', 30),
+    (4, 'MRI Scan', 10500.00, 'Magnetic Resonance Imaging scan', 45),
+    (5, 'Dental Cleaning', 1400.00, 'Routine dental cleaning', 30),
+    (6, 'Ultrasound', 2800.00, 'Diagnostic imaging technique using sound waves', 20),
+    (7, 'Counseling Session', 7000.00, 'Therapeutic counseling session', 60),
+    (8, 'Physician Consultation', 1750.00, 'Consultation with a physician', 15),
+    (9, 'Medication Review', 525.00, 'Review of medication regimen', 30),
+    (10, 'Surgery', 35000.00, 'Surgical procedure', 120);
+    
+    CREATE TABLE Nurse (
+    emp_id INT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    position VARCHAR(50) NOT NULL,
+   
+    department VARCHAR(50) NOT NULL,
+    shift VARCHAR(20) NOT NULL
+    );
+INSERT INTO Nurse (emp_id, first_name, last_name, position, department, shift)
+VALUES
+    (1, 'Emily', 'Smith', 'Registered Nurse', 'Emergency Department', 'Morning'),
+    (2, 'Michael', 'Johnson', 'Nurse Practitioner', 'ICU', 'Night'),
+    (3, 'Jennifer', 'Williams', 'Licensed Practical Nurse', 'Pediatrics', 'Evening'),
+    (4, 'Christopher', 'Brown', 'Nurse Manager', 'Surgery', 'Morning'),
+    (5, 'Jessica', 'Jones', 'Clinical Nurse Specialist', 'Cardiology', 'Night'),
+    (6, 'David', 'Miller', 'Staff Nurse', 'Orthopedics', 'Evening'),
+    (7, 'Ashley', 'Davis', 'Nurse Educator', 'Oncology', 'Morning'),
+    (8, 'Daniel', 'Wilson', 'Charge Nurse', 'Labor and Delivery', 'Night'),
+    (9, 'Sarah', 'Martinez', 'Operating Room Nurse', 'Anesthesiology', 'Evening'),
+    (10, 'James', 'Taylor', 'Pediatric Nurse', 'Neurology', 'Morning');
+
+CREATE TABLE Bed (
+    bed_no INT PRIMARY KEY,
+    bed_type VARCHAR(50) NOT NULL,
+    ward VARCHAR(50) NOT NULL,
+    floor INT NOT NULL,
+    
+    availability VARCHAR(10) NOT NULL
+    
+);
+INSERT INTO Bed (bed_no, bed_type, ward, floor, availability)
+VALUES
+    (101, 'Curative (Acute) Care', 'General Ward', 1, 'Available'),
+    (102, 'Critical Care', 'ICU', 2, 'Occupied'),
+    (103, 'Long-term Care', 'Maternity Ward', 3, 'Available'),
+    (104, 'Curative (Acute) Care', 'Pediatrics Ward', 1, 'Occupied'),
+    (105, 'Curative (Acute) Care', 'General Ward', 2, 'Available'),
+    (106, 'Adjustable Hospital', 'Surgery Ward', 4, 'Available'),
+    (107, 'Critical Care', 'ICU', 3, 'Occupied'),
+    (108, 'Specialty Hospital', 'Emergency Ward', 1, 'Available'),
+    (109, 'Long-term Care', 'Maternity Ward', 2, 'Occupied'),
+    (110, 'Rehabilitative Care', 'Pediatrics Ward', 3, 'Available');
+    
+    CREATE TABLE Stay (
+    stay_id INT PRIMARY KEY,
+    PatientID INT NOT NULL,
+    bed_no INT NOT NULL,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    FOREIGN KEY (PatientID) REFERENCES Patient(PatientID),
+    FOREIGN KEY (bed_no) REFERENCES Bed(bed_no)
+);
+INSERT INTO Stay (stay_id, PatientID, bed_no, start_time, end_time)
+VALUES
+    (1, 1, 101, '2024-01-31 08:00:00', '2024-01-31 12:00:00'),
+    (2, 2, 102, '2024-01-31 09:30:00', '2024-01-31 15:00:00'),
+    (3, 3, 103, '2024-01-31 11:00:00', '2024-01-31 18:00:00'),
+    (4, 4, 104, '2024-01-31 13:00:00', '2024-01-31 20:00:00'),
+    (5, 5, 105, '2024-01-31 15:00:00', '2024-01-31 22:00:00'),
+    (6, 6, 106, '2024-01-31 16:30:00', '2024-02-01 08:00:00'),
+    (7, 7, 107, '2024-01-31 18:00:00', '2024-02-01 12:00:00'),
+    (8, 8, 108, '2024-01-31 20:00:00', '2024-02-01 14:00:00'),
+    (9, 9, 109, '2024-02-01 10:00:00', '2024-02-02 08:00:00'),
+    (10, 10, 110, '2024-02-01 12:00:00', '2024-02-02 10:00:00');
+
+CREATE TABLE undergoes_Treatment (
+    PatientID INT PRIMARY KEY,
+    T_Code INT NOT NULL,
+    stay_id INT NOT NULL,
+    dr_id INT NOT NULL,
+    nurse_id INT NOT NULL,
+    date DATE NOT NULL,
+    outcome VARCHAR(255) NOT NULL,
+    FOREIGN KEY (PatientID) REFERENCES Patient(PatientID),
+    FOREIGN KEY (T_Code) REFERENCES Treatment(code),
+    FOREIGN KEY (stay_id) REFERENCES Stay(stay_id),
+    FOREIGN KEY (dr_id) REFERENCES Doctors(emp_id),
+    FOREIGN KEY (nurse_id) REFERENCES Nurse(emp_id)
+);
+INSERT INTO undergoes_Treatment (PatientID, T_Code, stay_id, dr_id, nurse_id, date, outcome)
+VALUES
+    (1, 1, 1, 1, 1, '2024-01-31', 'Recovered'),
+    (2, 2, 2, 2, 2, '2024-01-31', 'Improved'),
+    (3, 3, 3, 3, 3, '2024-01-31', 'Stable'),
+    (4, 4, 4, 4, 4, '2024-01-31', 'Recovered'),
+    (5, 5, 5, 5, 5, '2024-01-31', 'Improved'),
+    (6, 6, 6, 6, 6, '2024-01-31', 'Stable'),
+    (7, 7, 7, 7, 7, '2024-01-31', 'Recovered'),
+    (8, 8, 8, 8, 8, '2024-01-31', 'Improved'),
+    (9, 9, 9, 9, 9, '2024-01-31', 'Stable'),
+    (10, 10, 10, 10, 10, '2024-01-31', 'Recovered');
+CREATE TABLE insurance (
+    id INT PRIMARY KEY,
+    limit1 DECIMAL(10, 2) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    provider VARCHAR(100) NOT NULL
+);
+
+INSERT INTO insurance (id, limit1, start_date, end_date, provider)
+VALUES
+    (1, 50000.00, '2023-01-01', '2024-01-01', 'ABC Insurance Company'),
+    (2, 75000.00, '2023-02-01', '2024-02-01', 'XYZ Insurance Services'),
+    (3, 100000.00, '2023-03-01', '2024-03-01', 'PQR Health Insurance india'),
+    (4, 60000.00, '2023-04-01', '2024-04-01', 'LMN Healthcare Coverage'),
+    (5, 80000.00, '2023-05-01', '2024-05-01', 'DEF Insurance Solutions'),
+    (6, 90000.00, '2023-06-01', '2024-06-01', 'GHI Assurance Company'),
+    (7, 120000.00, '2023-07-01', '2024-07-01', 'JKL Medical Insurance'),
+    (8, 65000.00, '2023-08-01', '2024-08-01', 'MNO Health Plans'),
+    (9, 110000.00, '2023-09-01', '2024-09-01', 'RST Healthcare Services'),
+    (10, 95000.00, '2023-10-01', '2024-10-01', 'UVW Insurance Group');
+    
+ALTER TABLE Patient
+ADD CONSTRAINT fk_insurance_id
+    FOREIGN KEY (insurance_id) REFERENCES insurance(id);
+ALTER TABLE Patient
+MODIFY COLUMN insurance_id INT NOT NULL;
+select * from patient;
+
+UPDATE Patient
+SET insurance_id = 9
+WHERE PatientID = 9;
+
+ALTER TABLE Patient
+MODIFY COLUMN insurance_id INT NOT NULL;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
