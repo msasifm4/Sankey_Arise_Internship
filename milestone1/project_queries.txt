@@ -1,0 +1,56 @@
+Question 1
+1.1)
+CREATE ROLE doctor;
+GRANT SELECT ON milestone1.patient TO doctor;
+GRANT SELECT, INSERT ON milestone1.Prescribe TO doctor;
+GRANT SELECT, insert ON milestone1.PatientDiagnosis TO doctor;
+
+Create role nurse;
+GRANT SELECT ON milestone1.patient TO nurse;
+GRANT SELECT ON milestone1.Prescribe TO nurse;
+GRANT SELECT ON milestone1.PatientDiagnosis TO nurse;
+
+CREATE ROLE receptionist;
+GRANT SELECT, INSERT ON milestone1.patient TO receptionist;
+
+CREATE USER 'kaif'@'%' IDENTIFIED BY 'kaif1234';
+
+grant doctor to 'kaif'@'%';
+
+show grants for 'kaif'@'%';
+
+
+1.2)
+INSERT INTO PatientDiagnosis (PatientID, dr_id, Diagnosis, DiagnosisDate)
+VALUES
+    (1, 1, 'Fever', '2023-01-15'),
+    (2, 2, 'Headache', '2023-02-10'),
+    (3, 3, 'Flu', '2023-03-05'),
+    (4, 4, 'Allergies', '2023-04-20'),
+    (5, 5, 'Sprained Ankle', '2023-05-12');
+    
+INSERT INTO PatientDiagnosis (PatientID, dr_id, Diagnosis, DiagnosisDate)
+VALUES
+    (1, 1, 'Common Cold', '2023-06-30'),
+    (2, 2, 'Migraine', '2023-09-14'),
+    (3, 3, 'Stomachache', '2023-07-18'),
+    (4, 4, 'Sinusitis', '2023-08-25'),
+    (5, 5, 'Fractured Arm', '2023-10-05'),
+    (1, 6, 'Influenza', '2023-11-20'),
+    (2, 7, 'Ear Infection', '2023-12-15'),
+    (3, 8, 'Gastritis', '2024-01-10'),
+    (4, 9, 'Bronchitis', '2024-02-05'),
+    (5, 10, 'Sprained Wrist', '2024-03-02');
+
+    1.3)
+    SELECT FirstName, LastName, Age 
+FROM Patient 
+WHERE PatientID = 2;
+
+SELECT PatientID, Diagnosis, DiagnosisDate 
+FROM Patientdiagnosis 
+WHERE PatientID = 2;
+
+SELECT PatientID, date, dosage
+FROM prescribe
+WHERE PatientID = 2;    

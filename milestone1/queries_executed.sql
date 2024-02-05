@@ -290,7 +290,6 @@ WHERE PatientID = 9;
 ALTER TABLE Patient
 MODIFY COLUMN insurance_id INT NOT NULL;
 
-
 select * from Treatment;
 CREATE INDEX idx_code ON Treatment(code);
 select * from insurance;
@@ -370,8 +369,7 @@ VALUES
     (8, 18, 8, 8, '2023-08-10', '1 capsule twice daily'),
     (9, 19, 9, 9, '2023-09-25', '1 tablet after breakfast'),
     (10, 20, 10, 10, '2023-10-20', '1 spray every 4 hours');
-
-    CREATE ROLE doctor;
+CREATE ROLE doctor;
 GRANT SELECT ON milestone1.patient TO doctor;
 GRANT SELECT, INSERT ON milestone1.Prescribe TO doctor;
 GRANT SELECT, insert ON milestone1.PatientDiagnosis TO doctor;
@@ -389,13 +387,6 @@ CREATE USER 'kaif'@'%' IDENTIFIED BY 'kaif1234';
 grant doctor to 'kaif'@'%';
 
 show grants for 'kaif'@'%';
-
-
-
-
-
-
-
 
 
 
