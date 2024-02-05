@@ -108,13 +108,58 @@ SELECT prescribe.patientID,patient.FirstName,patient.LastName,prescribe.dr_id,pa
     INNER JOIN patient ON patient.PatientID = prescribe.PatientID;
 
 1.8)
-DELIMITER //
+    DELIMITER //
 
-CREATE PROCEDURE caltotal(IN pid INT)
-BEGIN
-SELECT *, Medication_cost + Treatment_cost + (days_stayed * 4500 ) + 1000 AS total_cost
-FROM patient_checkout_view
-WHERE PatientID = pid ;
-END//
+    CREATE PROCEDURE caltotal(IN pid INT)
+    BEGIN
+    SELECT *, Medication_cost + Treatment_cost + (days_stayed * 4500 ) + 1000 AS total_cost
+    FROM patient_checkout_view
+    WHERE PatientID = pid ;
+    END//
 
-DELIMITER ;
+    DELIMITER ;
+
+1.9)
+
+    CREATE TRIGGER after_medical_insurance_insert
+    AFTER INSERT ON insurance
+    FOR EACH ROW
+    BEGIN
+        IF NEW.end_date < CURDATE() THEN
+            INSERT INTO insurance_expiry_alerts (patient_id, alert_message, alert_datetime)
+            VALUES (NEW.id, 'Medical insurance limit has expired', NOW());
+        END IF;
+    END//
+    DELIMITER ;
+
+    DELIMITER //
+    CREATE TRIGGER after_medical_insurance_update
+    AFTER UPDATE ON insurance
+    FOR EACH ROW
+    BEGIN
+        IF NEW.end_date < CURDATE() THEN
+            INSERT INTO insurance_expiry_alerts (patient_id, alert_message, alert_datetime)
+            VALUES (NEW.id, 'Medical insurance limit has expired', NOW());
+        END IF;
+    END//
+    DELIMITER ;
+
+
+    DELIMITER //
+    CREATE TRIGGER after_medical_insurance_delete
+    AFTER DELETE ON insurance
+    FOR EACH ROW
+    BEGIN
+        IF OLD.end_date < CURDATE() THEN
+            INSERT INTO insurance_expiry_alerts (patient_id, alert_message, alert_datetime)
+            VALUES (OLD.id, 'Medical insurance limit has expired', NOW());
+        END IF;
+    END//
+    DELIMITER ;
+
+    INSERT INTO insurance (id, limit1, start_date, end_date, provider)
+    VALUES
+        (11, 50000.00, '2023-01-01', '2024-01-01', 'ABC Insurance Company');
+
+
+    select * from insurance_expiry_alerts;

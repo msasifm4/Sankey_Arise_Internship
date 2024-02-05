@@ -388,10 +388,146 @@ grant doctor to 'kaif'@'%';
 
 show grants for 'kaif'@'%';
 
+SELECT FirstName, LastName, Age 
+FROM Patient 
+WHERE PatientID = 2;
+
+SELECT PatientID, Diagnosis, DiagnosisDate 
+FROM Patientdiagnosis 
+WHERE PatientID = 2;
+
+SELECT PatientID, date, dosage
+FROM prescribe
+WHERE PatientID = 2;
+
+SELECT Patient.PatientID, Prescribe.date, Prescribe.dosage 
+FROM Patient 
+JOIN Prescribe ON Patient.PatientID = Prescribe.PatientID
+WHERE Patient.PatientID = 2
+LIMIT 0, 1000;
+
+SELECT PatientID,
+    (SELECT cost FROM medication WHERE m_id = 2) + 
+    (SELECT cost FROM treatment WHERE code = 3) + 
+    (SELECT stay FROM medication WHERE m_id = 2 ) + 600 AS result from patient;
+    
+SELECT DATEDIFF(end_time, start_time) AS days_difference
+FROM stay;
+SELECT prescribe.patientID,prescribe.dr_id,patientdiagnosis.DiagnosisID,patientdiagnosis.Diagnosis,medication.name as medication_name,prescribe.dosage
+FROM patientdiagnosis
+INNER JOIN prescribe ON patientdiagnosis.DiagnosisID = prescribe.DiagnosisID
+INNER JOIN medication ON prescribe.medication_id = medication.m_id;
+
+SELECT prescribe.patientID,prescribe.dr_id,patientdiagnosis.DiagnosisID,patientdiagnosis.Diagnosis,medication.name as medication_name,
+prescribe.dosage,medication.cost,treatment.cost,DATEDIFF(end_time, start_time) AS days_difference
+FROM patientdiagnosis
+INNER JOIN prescribe ON patientdiagnosis.DiagnosisID = prescribe.DiagnosisID
+INNER JOIN medication ON prescribe.medication_id = medication.m_id
+INNER JOIN undergoes_treatment ON undergoes_treatment.PatientID = prescribe.PatientID
+INNER JOIN treatment ON treatment.code = undergoes_treatment.T_Code
+INNER JOIN stay ON stay.stay_id = undergoes_treatment.stay_id;
+
+CREATE VIEW patient_checkout_view AS
+SELECT prescribe.patientID,patient.FirstName,patient.LastName,prescribe.dr_id,patientdiagnosis.DiagnosisID,patientdiagnosis.Diagnosis,medication.name as medication_name,
+prescribe.dosage,medication.cost as Medication_cost,treatment.cost as Treatment_cost,DATEDIFF(end_time, start_time) AS days_stayed
+FROM patientdiagnosis
+INNER JOIN prescribe ON patientdiagnosis.DiagnosisID = prescribe.DiagnosisID
+INNER JOIN medication ON prescribe.medication_id = medication.m_id
+INNER JOIN undergoes_treatment ON undergoes_treatment.PatientID = prescribe.PatientID
+INNER JOIN treatment ON treatment.code = undergoes_treatment.T_Code
+INNER JOIN stay ON stay.stay_id = undergoes_treatment.stay_id
+INNER JOIN patient ON patient.PatientID = prescribe.PatientID;
+
+select * from patient_checkout_view;
+SELECT
+    (SELECT Medication_cost FROM patient_checkout_view WHERE PatientID = 3) + 
+    (SELECT Treatment_cost FROM patient_checkout_view WHERE  PatientID = 3) + 
+    (SELECT days_stayed FROM patient_checkout_view WHERE  PatientID = 3) + 600 AS result from  patient_checkout_view;
+select * from patient_checkout_view;
+drop view patient_checkout_view;
+
+SELECT *, Medication_cost + Treatment_cost + (days_stayed * 4500 ) + 1000 AS total_cost
+FROM patient_checkout_view
+WHERE PatientID = 7 ;
+
+SELECT prescribe.patientID,patient.FirstName,patient.LastName,prescribe.dr_id,patientdiagnosis.DiagnosisID,patientdiagnosis.Diagnosis,medication.name as medication_name,
+prescribe.dosage,medication.cost as Medication_cost,treatment.cost as Treatment_cost,DATEDIFF(end_time, start_time) AS days_stayed,medication.cost + treatment.cost + (DATEDIFF(end_time, start_time) * 4500 ) + 1000 AS total_cost
+FROM patientdiagnosis
+INNER JOIN prescribe ON patientdiagnosis.DiagnosisID = prescribe.DiagnosisID
+INNER JOIN medication ON prescribe.medication_id = medication.m_id
+INNER JOIN undergoes_treatment ON undergoes_treatment.PatientID = prescribe.PatientID
+INNER JOIN treatment ON treatment.code = undergoes_treatment.T_Code
+INNER JOIN stay ON stay.stay_id = undergoes_treatment.stay_id
+INNER JOIN patient ON patient.PatientID = prescribe.PatientID;
+
+CREATE INDEX patientID_index ON patient(patientID);
+
+select * from patient where PatientID = 3;
 
 
+DELIMITER //
+
+CREATE PROCEDURE caltotal(IN pid INT)
+BEGIN
+SELECT *, Medication_cost + Treatment_cost + (days_stayed * 4500 ) + 1000 AS total_cost
+FROM patient_checkout_view
+WHERE PatientID = pid ;
+END//
+
+DELIMITER ;
+
+call caltotal(6);
+
+DELIMITER //
+
+CREATE TABLE insurance_expiry_alerts (
+    alert_id INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id INT,
+    alert_message VARCHAR(255),
+    alert_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+DELIMITER //
+CREATE TRIGGER after_medical_insurance_insert
+AFTER INSERT ON insurance
+FOR EACH ROW
+BEGIN
+	IF NEW.end_date < CURDATE() THEN
+        INSERT INTO insurance_expiry_alerts (patient_id, alert_message, alert_datetime)
+        VALUES (NEW.id, 'Medical insurance limit has expired', NOW());
+    END IF;
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER after_medical_insurance_update
+AFTER UPDATE ON insurance
+FOR EACH ROW
+BEGIN
+    IF NEW.end_date < CURDATE() THEN
+        INSERT INTO insurance_expiry_alerts (patient_id, alert_message, alert_datetime)
+        VALUES (NEW.id, 'Medical insurance limit has expired', NOW());
+    END IF;
+END//
+DELIMITER ;
 
 
+DELIMITER //
+CREATE TRIGGER after_medical_insurance_delete
+AFTER DELETE ON insurance
+FOR EACH ROW
+BEGIN
+    IF OLD.end_date < CURDATE() THEN
+        INSERT INTO insurance_expiry_alerts (patient_id, alert_message, alert_datetime)
+        VALUES (OLD.id, 'Medical insurance limit has expired', NOW());
+    END IF;
+END//
+DELIMITER ;
+
+INSERT INTO insurance (id, limit1, start_date, end_date, provider)
+VALUES
+    (11, 50000.00, '2023-01-01', '2024-01-01', 'ABC Insurance Company');
 
 
+select * from insurance_expiry_alerts;
 
