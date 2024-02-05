@@ -42,8 +42,8 @@ VALUES
     (4, 9, 'Bronchitis', '2024-02-05'),
     (5, 10, 'Sprained Wrist', '2024-03-02');
 
-    1.3)
-    SELECT FirstName, LastName, Age 
+1.3)
+SELECT FirstName, LastName, Age 
 FROM Patient 
 WHERE PatientID = 2;
 
@@ -54,3 +54,12 @@ WHERE PatientID = 2;
 SELECT PatientID, date, dosage
 FROM prescribe
 WHERE PatientID = 2;    
+1.5)
+SELECT prescribe.patientID,prescribe.dr_id,prescribe.dosage,patientdiagnosis.DiagnosisID,patientdiagnosis.Diagnosis
+FROM patientdiagnosis
+INNER JOIN prescribe ON patientdiagnosis.DiagnosisID = prescribe.DiagnosisID;
+
+SELECT prescribe.patientID,prescribe.dr_id,patientdiagnosis.DiagnosisID,patientdiagnosis.Diagnosis,medication.name as medication_name,prescribe.dosage
+FROM patientdiagnosis
+INNER JOIN prescribe ON patientdiagnosis.DiagnosisID = prescribe.DiagnosisID
+INNER JOIN medication ON prescribe.medication_id = medication.m_id;
